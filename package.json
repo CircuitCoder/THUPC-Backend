@@ -1,0 +1,23 @@
+{
+  "name": "ranklist",
+  "version": "1.0.0",
+  "description": "",
+  "main": "backend.mjs",
+  "dependencies": {
+    "koa": "^2.5.1",
+    "koa-router": "^7.4.0",
+    "koa-static": "^4.0.2",
+    "redis": "^2.8.0",
+    "socket.io": "^2.1.0",
+    "uuid": "^3.2.1",
+    "uws": "^10.148.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node --experimental-modules backend.mjs",
+    "teams": "node --experimental-modules teams.mjs"
+  },
+  "author": "CircuitCoder",
+  "license": "MIT"
+}

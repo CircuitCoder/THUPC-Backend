@@ -1,0 +1,5 @@
+teams.csv
+node_modules/
+.*.sw[a-p]
+keys.json
+teams.json
