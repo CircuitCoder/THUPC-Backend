@@ -1,6 +1,7 @@
 body {
   padding: 60px 40px;
   margin: 0 auto;
+  max-width: 1280px;
 
   color: rgba(0,0,0,.87);
 }
@@ -19,6 +20,12 @@ body {
 
 .centering {
   text-align: center;
+}
+
+.title small {
+  font-size: 24px;
+  font-weight: normal;
+  color: rgba(0,0,0,.54);
 }
 
 .balloons {
@@ -96,5 +103,86 @@ body {
 
 .balloons-empty {
   font-size: 20px;
+  color: rgba(0,0,0,.3);
+}
+
+/* Ranklists */
+
+.ranklist {
+  box-shadow: rgba(0,0,0,.3) 0 4px 12px;
+  font-size: 12px;
+}
+
+.ranklist-row {
+  display: flex;
+  height: 60px;
+}
+
+.ranklist-head {
+  font-weight: bold;
+}
+
+.ranklist-row > div {
+  width: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.ranklist-row:nth-child(2n) {
+  background: rgba(0,0,0,.06);
+}
+
+.ranklist-row > div.ranklist-title {
+  flex: 1;
+  align-items: flex-start;
+  white-space: pre;
+}
+
+.ranklist-title-zh {
+  line-height: 24px;
+  font-size: 18px;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ranklist-title-en {
+  line-height: 16px;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ranklist-prob {
+  font-weight: bold;
+}
+
+.accepted {
+  text-align: center;
+  color: #388E3C;
+}
+
+.accepted small {
+  font-size: 10px;
+  display: block;
+}
+
+.accepted small small {
+  display: block;
+  text-align: right;
+  font-size: 6px;
+}
+
+.faulty {
+  color: #D32F2F;
+}
+
+.pending {
+  color: rgba(0,0,0,.54);
+}
+
+.absent {
   color: rgba(0,0,0,.3);
 }

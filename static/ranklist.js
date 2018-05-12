@@ -1,0 +1,113 @@
+const QUESTIONS = [
+  'A',
+  'B',
+  'C',
+  'D',
+  'E',
+  'F',
+  'G',
+  'H',
+  'I',
+  'J',
+  'K',
+  'L',
+  'M',
+];
+
+let inst;
+
+const tmpl = {
+  el: '#app',
+  data: {
+    teams: {},
+    ranklist: [],
+
+    started: false,
+    frozen: false,
+    ended: false,
+
+    lastUpdated: 0,
+    timing: null,
+    time: 0,
+    untilStarting: 'unknown time',
+
+    QUESTIONS,
+  },
+  async created() {
+    const req = await fetch('/teams');
+    this.teams = await req.json();
+    this.sync();
+  },
+  mounted() {
+    const updateTime = () => {
+      if(this.timing) {
+        const now = moment();
+        const starting = moment(this.timing.from);
+        const ending = moment(this.timing.to);
+
+        this.started = starting <= now;
+        this.ended = ending <= now;
+
+        if(this.ended) {
+          const dur = moment.duration(now.diff(ending));
+          this.time = dur.format('hh:mm:ss.SSS');
+        } if(this.started) {
+          const dur = moment.duration(ending.diff(now));
+          this.time = dur.format('hh:mm:ss.SSS');
+          if(dur.hours() < 1) // Frozen
+            this.frozen = true;
+        } else {
+          this.untilStarting = now.to(starting, true);
+        }
+      }
+
+      requestAnimationFrame(updateTime);
+    };
+
+    updateTime();
+  },
+  methods: {
+    async sync() {
+      const req = await fetch('/ranklist');
+      const { timestamp, timing, ranklist } = await req.json();
+      this.timing = timing;
+      this.lastUpdated = timestamp;
+      this.ranklist = ranklist;
+
+      for(let r of this.ranklist) {
+        const dur = moment.duration(r.time);
+        r.clamped_time = Math.floor(dur.asMinutes());
+        for(let k in r.details) {
+          if(r.details[k].acceptedAt) {
+            r.details[k].clamped_acceptedAt = this.timeSub(r.details[k].acceptedAt);
+            r.details[k].clamped_acceptedAt_sec = this.timeSubSec(r.details[k].acceptedAt);
+          }
+        }
+      }
+    },
+
+    timeSub(ts) {
+      const t = moment(ts);
+      const starting = moment(this.timing.from);
+      return moment.duration(t.diff(starting)).format('h:mm:ss');
+    },
+
+    timeSubSec(ts) {
+      const t = moment(ts);
+      const starting = moment(this.timing.from);
+      return '.'+moment.duration(t.diff(starting)).milliseconds();
+    }
+  },
+};
+
+function boot() {
+  socket = io('/ranking', {
+    path: '/socket',
+  });
+
+  socket.on('sync', () => {
+    inst.sync();
+  });
+
+  inst = new Vue(tmpl);
+}

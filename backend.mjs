@@ -18,6 +18,7 @@ const fs = fsMod.promises;
 
 import Store from './store';
 import BalloonQueue from './balloonQueue';
+import Config from './config';
 
 // Stores
 let teams;
@@ -42,6 +43,17 @@ router.get('/balloons/:id', async ctx => {
   };
 });
 
+router.get('/ranklist', async ctx => {
+  return ctx.body = {
+    timestamp: Date.now(),
+    timing: {
+      from: moment(Config.contest.from),
+      to: moment(Config.contest.to),
+    },
+    ranklist: store.rank(),
+  };
+});
+
 app.use(router.routes(), router.allowedMethods());
 app.use(KoaStatic(path.resolve(__dirname, 'static')));
 
@@ -59,12 +71,15 @@ const ioBalloon = io.of('/balloon');
 async function submission(payload) {
   store.pending(payload.from, payload.question, payload.id, payload.time);
 
+  /*
   ioRanking.emit('new', {
     id: payload.id,
     from: payload.from,
     question: payload.question,
     time: payload.time,
   });
+  */
+  ioRanking.emit('sync');
 
   ioStatus.emit('pending', {
     id: payload.id,
@@ -75,16 +90,29 @@ async function submission(payload) {
 }
 
 async function finalize(payload) {
-  // TODO: suspended
+  let cont;
   if(payload.accepted)
-    store.accepted(payload.from, payload.question, payload.id);
+    cont = store.accepted(payload.from, payload.question, payload.id);
   else
-    store.faulty(payload.from, payload.question, payload.id);
+    cont =- store.faulty(payload.from, payload.question, payload.id);
+  console.log(cont);
 
+  const endingTime = moment(Config.contest.to);
+  endingTime.subtract(1).hours();
+
+  if(endingTime < moment(cont.time)) {
+
+    // Frozen
+    return;
+  }
+
+  /*
   ioRanking.emit('update', {
     id: payload.id,
     accepted: payload.accepted,
   });
+  */
+  ioRanking.emit('sync');
 
   ioStatus.emit('resolve', {
     id: payload.id,
