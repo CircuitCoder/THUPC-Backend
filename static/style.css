@@ -213,6 +213,11 @@ body {
   transition: transform .5s;
 }
 
+.last-ac {
+  background: #B3E5FC;
+  box-shadow: rgba(0,0,0,.3) 0 2px 6px;
+}
+
 .first-blood {
   background: #C8E6C9;
   box-shadow: rgba(0,0,0,.3) 0 2px 6px;

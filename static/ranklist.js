@@ -25,6 +25,7 @@ const tmpl = {
     teams: {},
     ranklist: [],
     firstBlood: [],
+    lastAC: null,
 
     started: false,
     frozen: false,
@@ -67,6 +68,15 @@ const tmpl = {
           if(r.details[k].acceptedAt
             && (this.firstBlood[k] === null || this.firstBlood[k].acceptedAt > r.details[k].acceptedAt))
             this.firstBlood[k] = r.details[k];
+        }
+      }
+
+      this.lastAC = null;
+      for(let r of this.ranklist) {
+        for(let k in r.details) {
+          if(r.details[k].acceptedAt
+            && (this.lastAC === null || this.lastAC.acceptedAt < r.details[k].acceptedAt))
+            this.lastAC = r.details[k];
         }
       }
     },

@@ -48,7 +48,9 @@
             <div class="ranklist-time">{{ r.clamped_time }}</div>
             <div class="ranklist-prob" v-for="(q, qid) of QUESTIONS">
               <div v-if="qid in r.details">
-                <div v-if="r.details[qid].acceptedAt" class="accepted" :class="{ 'first-blood': firstBlood[qid] === r.details[qid] }">
+                <div v-if="r.details[qid].acceptedAt" class="accepted" :class="{ 'first-blood': firstBlood[qid] === r.details[qid],
+             'last-ac': lastAC === r.details[qid]
+           }">
                   +{{ r.details[qid].countedFaulty === 0 ? '' : r.details[qid].countedFaulty + 1 }}
                   <small>{{ r.details[qid].clamped_acceptedAt }}<small>{{ r.details[qid].clamped_acceptedAt_sec }}</small></small>
                 </div>
