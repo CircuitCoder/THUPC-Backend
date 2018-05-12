@@ -8,6 +8,8 @@ import SocketIO from 'socket.io';
 
 import redis from 'redis';
 
+import moment from 'moment';
+
 import url from 'url';
 import path from 'path';
 import http from 'http';
@@ -33,10 +35,10 @@ router.get('/teams', async ctx => {
 });
 
 router.get('/balloons/:id', async ctx => {
-  if(!(id in keys)) return ctx.status = 403;
+  if(!(ctx.params.id in keys)) return ctx.status = 403;
   ctx.body = {
     unclaimed: balloons.list(),
-    assigned: balloons.list(ctx.params.iD),
+    assigned: balloons.list(ctx.params.id),
   };
 });
 
@@ -72,7 +74,7 @@ async function submission(payload) {
   });
 }
 
-async function finalized(payload) {
+async function finalize(payload) {
   // TODO: suspended
   if(payload.accepted)
     store.accepted(payload.from, payload.question, payload.id);
@@ -106,13 +108,17 @@ ioBalloon.on('connection', client => {
     client.emit('authentication', 'accepted');
 
     client.on('resolve', id => {
-      balloons.resolve(key, id);
-      ioBalloon.emit('sync');
+      try {
+        balloons.resolve(key, id);
+        ioBalloon.emit('sync');
+      } catch(e) { console.error(e) }
     });
 
     client.on('claim', id => {
-      balloons.claim(key, id);
-      ioBalloon.emit('sync');
+      try {
+        balloons.claim(key, id);
+        ioBalloon.emit('sync');
+      } catch(e) { client.emit('failed'); }
     });
   });
 });
@@ -120,21 +126,21 @@ ioBalloon.on('connection', client => {
 // PubSub
 const hub = redis.createClient();
 hub.subscribe('submission');
-hub.subscribe('finalized');
+hub.subscribe('finalize');
 
 hub.on('message', (channel, msg) => {
   const payload = JSON.parse(msg);
 
   // Deferred async execution
   if(channel === 'submission') submission(payload);
-  else if(channel === 'finalized') finalized(payload);
+  else if(channel === 'finalize') finalize(payload);
 });
 
 // Bootstrap 
 async function boot() {
   const teamsStr = (await fs.readFile(path.resolve(__dirname, './teams.json')))
     .toString('utf-8');
-  teams = JSON.parse(dataStr);
+  teams = JSON.parse(teamsStr);
 
   const keysStr = (await fs.readFile(path.resolve(__dirname, './keys.json')))
     .toString('utf-8');
@@ -142,6 +148,12 @@ async function boot() {
 
   store = new Store(teams);
   balloons = new BalloonQueue();
+
+  const backlog = await fsMod.createWriteStream(path.resolve(__dirname, './balloons.log'), { flags: 'a' });
+  balloons.on('resolve', ({ from, question, assignee }) => {
+    const curtime = moment().format('hh:mm:ss.SSS');
+    backlog.write(`[${curtime}] ${from}:\t${question} # ${assignee}\n`);
+  });
 
   const port = process.env.PORT || 6858;
   server.listen(port, () => {

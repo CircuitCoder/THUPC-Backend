@@ -7,6 +7,8 @@ import path from 'path';
 import fsMod from 'fs';
 const fs = fsMod.promises;
 
+import crypto from 'crypto';
+
 const reader = new readline.createInterface({
   input: process.stdin,
   output: process.stdout
@@ -20,6 +22,7 @@ if(process.argv[2] === 'load') {
 
   const prefix = 'THUPC_2018_';
   let counter = 0;
+  let read = 0;
 
   console.log("Reading");
 
@@ -45,6 +48,8 @@ if(process.argv[2] === 'load') {
       grade: input[5],
       sex: input[7],
     });
+
+    console.log(`Read: ${++read}`);
   });
 
   reader.on('close', async () => {
@@ -58,4 +63,23 @@ if(process.argv[2] === 'load') {
     await fs.writeFile(target, JSON.stringify(result));
     console.log(`Written to ${target}`);
   });
+}
+
+if(process.argv[2] === 'pass') {
+  async function doPass() {
+    const store = path.resolve(__dirname, './teams.json');
+    const teams = JSON.parse((await fs.readFile(store)).toString('utf-8'));
+    let result = 'username,realname,school,password\n';
+    for(const t in teams) {
+      const team = teams[t];
+      team.pass = crypto.randomBytes(4).toString('hex');
+      result += `${team.id},${team.title},THUPC,${team.pass}\n`;
+    }
+
+    const target = path.resolve(__dirname, './pass.csv');
+    await fs.writeFile(target, result);
+    console.log(`Written to ${target}`);
+  }
+
+  doPass();
 }

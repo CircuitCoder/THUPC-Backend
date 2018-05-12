@@ -3,3 +3,6 @@ node_modules/
 .*.sw[a-p]
 keys.json
 teams.json
+pass.csv
+pass.gbk.csv
+balloons.log

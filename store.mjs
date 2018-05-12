@@ -1,8 +1,8 @@
 export default class Store {
   constructor(teams) {
     this.map = new Map();
-    for(const t of teams)
-      this.map.set(t.id, new Map());
+    for(const t in teams)
+      this.map.set(t, new Map());
   }
 
   bucket(id, question) {
@@ -41,14 +41,15 @@ export default class Store {
 
   accepted(id, question, subId) {
     const bucket = this.bucket(id, question);
+    console.log(bucket);
     const index = bucket.tries.findIndex(e => e.id === subId);
     if(index === -1) throw new Error(`Submission ${subId} not found. Maybe the storage is out of sync?`);
 
     --bucket.pending;
-    bucket[index].status = 'accepted';
+    bucket.tries[index].status = 'accepted';
 
     // Update faulty count
-    if(bucket[index].time < bucket.acceptedAt) {
+    if(bucket.tries[index].time < bucket.acceptedAt) {
       bucket.countedFaulty = index;
       bucket.acceptedAt = bucket[index].time;
     }

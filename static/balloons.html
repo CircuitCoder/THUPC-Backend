@@ -1,0 +1,51 @@
+<!DOCTYPE>
+
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Balloons</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="vue.min.js"></script>
+    <script src="socket.io.js"></script>
+    <script src="balloons.js"></script>
+  </head>
+  <body class="balloon-body" onload="boot()">
+    <div id="app">
+      <div class="title centering">&#x1F388; THUPC &#x1F388;</div>
+
+      <div v-if="assigned.length !== 0">
+        <div class="subtitle">
+          我的气球
+        </div>
+        <div class="balloons">
+          <div class="balloon" v-for="b of assigned">
+            <div class="balloon-name">{{ teams[b.from].title }}</div>
+            <div class="balloon-loc">{{ teams[b.from].seat }}</div>
+            <div class="balloon-action" @click="resolve(b)">
+              <img src="assets/done.svg"></img>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div v-if="unclaimed.length !== 0">
+        <div class="subtitle">
+          抢气球
+        </div>
+        <div class="balloons">
+          <div class="balloon" v-for="b of unclaimed">
+            <div class="balloon-name">{{ teams[b.from].title }}</div>
+            <div class="balloon-loc">{{ teams[b.from].seat }}</div>
+            <div class="balloon-action" @click="claim(b)">
+              <img src="assets/mark.svg"></img>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div v-if="unclaimed.length === 0 && assigned.length === 0" class="balloons-empty">
+        喵喵，再等等哦~
+      </div>
+    </div>
+  </body>
+</html>
