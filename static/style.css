@@ -186,3 +186,7 @@ body {
 .absent {
   color: rgba(0,0,0,.3);
 }
+
+.ranklist-move {
+  transition: transform .5s;
+}

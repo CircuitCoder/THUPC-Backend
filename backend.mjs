@@ -95,8 +95,6 @@ async function finalize(payload) {
     cont = store.accepted(payload.from, payload.question, payload.id);
   else
     cont =- store.faulty(payload.from, payload.question, payload.id);
-  console.log(cont);
-
   const endingTime = moment(Config.contest.to);
   endingTime.subtract(1).hours();
 

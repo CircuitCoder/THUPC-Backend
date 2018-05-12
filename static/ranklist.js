@@ -16,6 +16,8 @@ const QUESTIONS = [
 
 let inst;
 
+let timerInst;
+
 const tmpl = {
   el: '#app',
   data: {
@@ -28,8 +30,6 @@ const tmpl = {
 
     lastUpdated: 0,
     timing: null,
-    time: 0,
-    untilStarting: 'unknown time',
 
     QUESTIONS,
   },
@@ -37,6 +37,57 @@ const tmpl = {
     const req = await fetch('/teams');
     this.teams = await req.json();
     this.sync();
+  },
+  methods: {
+    async sync() {
+      const req = await fetch('/ranklist');
+      const { timestamp, timing, ranklist } = await req.json();
+      timerInst.timing = timing;
+      this.timing = timing;
+      this.lastUpdated = timestamp;
+      this.ranklist = ranklist;
+
+      for(let r of this.ranklist) {
+        const dur = moment.duration(r.time);
+        r.clamped_time = Math.floor(dur.asMinutes());
+        for(let k in r.details) {
+          if(r.details[k].acceptedAt) {
+            r.details[k].clamped_acceptedAt = this.timeSub(r.details[k].acceptedAt);
+            r.details[k].clamped_acceptedAt_sec = this.timeSubSec(r.details[k].acceptedAt);
+          }
+        }
+      }
+    },
+
+    timeSub(ts) {
+      const t = moment(ts);
+      const starting = moment(this.timing.from);
+      return moment.duration(t.diff(starting)).format('h:mm:ss');
+    },
+
+    timeSubSec(ts) {
+      const t = moment(ts);
+      const starting = moment(this.timing.from);
+      return '.'+moment.duration(t.diff(starting)).milliseconds();
+    }
+  },
+
+  watch: {
+    ranklist() {
+      console.log('mutate');
+    }
+  },
+};
+
+const timerTmpl = {
+  el: '#timer',
+  data: {
+    timing: null,
+    started: false,
+    ended: false,
+    frozen: false,
+    untilStarting: '',
+    time: 0,
   },
   mounted() {
     const updateTime = () => {
@@ -66,38 +117,6 @@ const tmpl = {
 
     updateTime();
   },
-  methods: {
-    async sync() {
-      const req = await fetch('/ranklist');
-      const { timestamp, timing, ranklist } = await req.json();
-      this.timing = timing;
-      this.lastUpdated = timestamp;
-      this.ranklist = ranklist;
-
-      for(let r of this.ranklist) {
-        const dur = moment.duration(r.time);
-        r.clamped_time = Math.floor(dur.asMinutes());
-        for(let k in r.details) {
-          if(r.details[k].acceptedAt) {
-            r.details[k].clamped_acceptedAt = this.timeSub(r.details[k].acceptedAt);
-            r.details[k].clamped_acceptedAt_sec = this.timeSubSec(r.details[k].acceptedAt);
-          }
-        }
-      }
-    },
-
-    timeSub(ts) {
-      const t = moment(ts);
-      const starting = moment(this.timing.from);
-      return moment.duration(t.diff(starting)).format('h:mm:ss');
-    },
-
-    timeSubSec(ts) {
-      const t = moment(ts);
-      const starting = moment(this.timing.from);
-      return '.'+moment.duration(t.diff(starting)).milliseconds();
-    }
-  },
 };
 
 function boot() {
@@ -110,4 +129,5 @@ function boot() {
   });
 
   inst = new Vue(tmpl);
+  timerInst = new Vue(timerTmpl);
 }

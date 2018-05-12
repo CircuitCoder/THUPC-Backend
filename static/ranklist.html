@@ -12,11 +12,13 @@
     <script src="ranklist.js"></script>
   </head>
   <body class="ranklist-body" onload="boot()">
-    <div id="app">
+    <div id="timer">
       <div class="title" v-if="ended">THUPC <small>Ended +{{ time }}</small></div>
       <div class="title" v-if="started && !ended">THUPC <small><span v-if="frozen">Frozen </span>-{{ time }}</small></div>
       <div class="title" v-if="!started">THUPC <small>Starting in {{ untilStarting }}</small></div>
 
+    </div>
+    <div id="app">
       <div class="ranklist">
         <div class="ranklist-row ranklist-head">
           <div class="ranklist-rank"></div>
@@ -26,29 +28,32 @@
           <div class="ranklist-time">T/min</div>
           <div class="ranklist-prob" v-for="q of QUESTIONS">{{ q }}</div>
         </div>
-        <div v-for="(r, index) of ranklist" class="ranklist-row">
-          <div class="ranklist-rank">{{ r.rank }}</div>
-          <div class="ranklist-title">
-            <div class="ranklist-title-zh">{{ teams[r.id].title }}</div>
-            <div class="ranklist-title-en">{{ teams[r.id].eng_title }}</div>
-          </div>
-          <div class="ranklist-awards"></div>
-          <div class="ranklist-accepted">{{ r.accepted }}</div>
-          <div class="ranklist-time">{{ r.clamped_time }}</div>
-          <div class="ranklist-prob" v-for="(q, qid) of QUESTIONS">
-            <div v-if="qid in r.details">
-              <div v-if="r.details[qid].acceptedAt" class="accepted">
-                +{{ r.details[qid].countedFaulty === 0 ? '' : r.details[qid].countedFaulty + 1 }}
-                <small>{{ r.details[qid].clamped_acceptedAt }}<small>{{ r.details[qid].clamped_acceptedAt_sec }}</small></small>
-              </div>
-              <div v-else>
-                <span class="faulty" v-if="r.details[qid].countedFaulty > 0" class="faulty">-{{r.details[qid].countedFaulty}}</span>
-                <span class="pending" v-if="r.details[qid].pending > 0">?{{r.details[qid].pending}}</span>
-              </div>
+
+        <transition-group name="ranklist">
+          <div v-for="(r, index) of ranklist" class="ranklist-row" :key="r.id">
+            <div class="ranklist-rank">{{ r.rank }}</div>
+            <div class="ranklist-title">
+              <div class="ranklist-title-zh">{{ teams[r.id].title }}</div>
+              <div class="ranklist-title-en">{{ teams[r.id].eng_title }}</div>
             </div>
-            <div v-else class="absent"> - </div>
+            <div class="ranklist-awards"></div>
+            <div class="ranklist-accepted">{{ r.accepted }}</div>
+            <div class="ranklist-time">{{ r.clamped_time }}</div>
+            <div class="ranklist-prob" v-for="(q, qid) of QUESTIONS">
+              <div v-if="qid in r.details">
+                <div v-if="r.details[qid].acceptedAt" class="accepted">
+                  +{{ r.details[qid].countedFaulty === 0 ? '' : r.details[qid].countedFaulty + 1 }}
+                  <small>{{ r.details[qid].clamped_acceptedAt }}<small>{{ r.details[qid].clamped_acceptedAt_sec }}</small></small>
+                </div>
+                <div v-else>
+                  <span class="faulty" v-if="r.details[qid].countedFaulty > 0" class="faulty">-{{r.details[qid].countedFaulty}}</span>
+                  <span class="pending" v-if="r.details[qid].pending > 0">?{{r.details[qid].pending}}</span>
+                </div>
+              </div>
+              <div v-else class="absent"> - </div>
+            </div>
           </div>
-        </div>
+        </transition-group>
       </div>
     </div>
   </body>
