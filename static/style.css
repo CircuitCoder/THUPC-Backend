@@ -218,6 +218,19 @@ body {
   box-shadow: rgba(0,0,0,.3) 0 2px 6px;
 }
 
+.ranklist-rank {
+  position: relative;
+}
+
+.best-girl .ranklist-rank::before {
+  content: '';
+  width: 5px;
+  height: 100%;
+  position: absolute;
+  background: #F48FB1;
+  left: 0;
+}
+
 .first-blood {
   background: #C8E6C9;
   box-shadow: rgba(0,0,0,.3) 0 2px 6px;

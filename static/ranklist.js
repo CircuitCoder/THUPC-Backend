@@ -26,6 +26,7 @@ const tmpl = {
     ranklist: [],
     firstBlood: [],
     lastAC: null,
+    bestGirl: null,
 
     started: false,
     frozen: false,
@@ -77,6 +78,14 @@ const tmpl = {
           if(r.details[k].acceptedAt
             && (this.lastAC === null || this.lastAC.acceptedAt < r.details[k].acceptedAt))
             this.lastAC = r.details[k];
+        }
+      }
+
+      this.bestGirl = null;
+      for(let r of this.ranklist) {
+        if(this.teams[r.id].members.every(k => k.sex === '女')) {
+          this.bestGirl = r;
+          break;
         }
       }
     },

@@ -23,14 +23,13 @@
         <div class="ranklist-row ranklist-head">
           <div class="ranklist-rank"></div>
           <div class="ranklist-title"></div>
-          <div class="ranklist-awards"></div>
           <div class="ranklist-accepted">+</div>
           <div class="ranklist-time">T/min</div>
           <div class="ranklist-prob" v-for="q of QUESTIONS">{{ q }}</div>
         </div>
 
         <transition-group name="ranklist">
-          <div v-for="(r, index) of ranklist" class="ranklist-row" :key="r.id" :class="{ pinned: PINNED.includes(r.id) }">
+          <div v-for="(r, index) of ranklist" class="ranklist-row" :key="r.id" :class="{ pinned: PINNED.includes(r.id), 'best-girl': bestGirl === r }">
             <div class="ranklist-rank"
               :class="{
                 gold: r.rank < 4,
@@ -43,7 +42,6 @@
               <div class="ranklist-title-zh">{{ teams[r.id].title }}</div>
               <div class="ranklist-title-en">{{ teams[r.id].eng_title }}</div>
             </div>
-            <div class="ranklist-awards"></div>
             <div class="ranklist-accepted">{{ r.accepted }}</div>
             <div class="ranklist-time">{{ r.clamped_time }}</div>
             <div class="ranklist-prob" v-for="(q, qid) of QUESTIONS">
