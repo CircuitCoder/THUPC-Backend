@@ -14,8 +14,9 @@ const QUESTIONS = [
   'M',
 ];
 
-let inst;
+const PINNED = window.location.hash.substr(1).split(',');
 
+let inst;
 let timerInst;
 
 const tmpl = {
@@ -23,6 +24,7 @@ const tmpl = {
   data: {
     teams: {},
     ranklist: [],
+    firstBlood: [],
 
     started: false,
     frozen: false,
@@ -32,6 +34,7 @@ const tmpl = {
     timing: null,
 
     QUESTIONS,
+    PINNED,
   },
   async created() {
     const req = await fetch('/teams');
@@ -55,6 +58,15 @@ const tmpl = {
             r.details[k].clamped_acceptedAt = this.timeSub(r.details[k].acceptedAt);
             r.details[k].clamped_acceptedAt_sec = this.timeSubSec(r.details[k].acceptedAt);
           }
+        }
+      }
+
+      this.firstBlood = new Array(this.QUESTIONS.length).fill(null);
+      for(let r of this.ranklist) {
+        for(let k in r.details) {
+          if(r.details[k].acceptedAt
+            && (this.firstBlood[k] === null || this.firstBlood[k].acceptedAt > r.details[k].acceptedAt))
+            this.firstBlood[k] = r.details[k];
         }
       }
     },
