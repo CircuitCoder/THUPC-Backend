@@ -29,7 +29,7 @@
         </div>
 
         <transition-group name="ranklist">
-          <div v-for="(r, index) of ranklist" class="ranklist-row" :key="r.id" :class="{ pinned: PINNED.includes(r.id), 'best-girl': bestGirl === r, expanded: r.expanded }" @click="expand(r)">
+          <div v-for="(r, index) of ranklist" class="ranklist-row" :key="r.id" :class="{ pinned: PINNED.includes(r.id), 'best-girl': bestGirl === r, expanded: r.expanded, hlr: targetUser === r.id }" @click="expand(r)">
             <div class="ranklist-rank"
               :class="{
                 gold: r.rank < 5,
@@ -44,8 +44,8 @@
             </div>
             <div class="ranklist-accepted">{{ r.accepted }}</div>
             <div class="ranklist-time">{{ r.clamped_time }}</div>
-            <div class="ranklist-prob" v-for="(q, qid) of QUESTIONS">
-              <div v-if="qid in r.details">
+	    <div class="ranklist-prob" v-for="(q, qid) of QUESTIONS" :class="{ hl: r.id === targetUser && qid === targetProb }">
+	    <div v-if="qid in r.details" >
                 <div v-if="r.details[qid].acceptedAt" class="accepted" :class="{ 'first-blood': firstBlood[qid] === r.details[qid],
              'last-ac': lastAC === r.details[qid]
            }">

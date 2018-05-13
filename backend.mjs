@@ -26,6 +26,7 @@ let keys;
 
 let store;
 let balloons;
+let waiting = new Map();
 
 // Connections
 
@@ -52,6 +53,21 @@ router.get('/ranklist', async ctx => {
     },
     ranklist: store.rank(),
   };
+});
+
+router.get('/apply/:user/:prob', async ctx => {
+	const buckets = waiting.get(ctx.params.user);
+	if(!buckets) return ctx.status = 404;
+	const bucket = buckets.get(parseInt(ctx.params.prob, 10));
+	if(!bucket) return ctx.status = 404;
+
+	for(const payload of bucket) {
+		if(payload.accepted)
+			store.accepted(payload.from, payload.question, payload.id);
+		else
+			store.faulty(payload.from, payload.question, payload.id);
+	}
+	return ctx.body = {};
 });
 
 app.use(router.routes(), router.allowedMethods());
@@ -93,10 +109,23 @@ async function submission(payload) {
 
 async function finalize(payload) {
   let cont = store.get(payload.from, payload.question, payload.id);
+
   const endingTime = moment(Config.contest.to);
   endingTime.subtract(1, 'h');
   if(endingTime < moment(cont.time)) {
-    // Frozen
+	  let store = waiting.get(payload.from);
+	  if(!store) {
+		  store = new Map(); 
+		  waiting.set(payload.from, store);
+	  }
+
+	  let bucket = store.get(payload.question);
+	  if(!bucket) {
+		  bucket = [];
+		  store.set(payload.question, bucket);
+	  }
+
+	  bucket.push(payload);
     return;
   }
 

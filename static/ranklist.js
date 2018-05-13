@@ -37,6 +37,10 @@ const tmpl = {
 
     QUESTIONS,
     PINNED,
+
+	  rolling: false,
+	  targetUser: null,
+	  targetProb: null,
   },
   async created() {
     const req = await fetch('/teams');
@@ -89,6 +93,34 @@ const tmpl = {
         }
       }
     },
+
+	  async step() {
+		  console.log('wtf');
+		  if(!this.rolling) this.rolling = true;
+		  else await this.unreveal();
+
+		  await this.findNext();
+	  },
+
+	  async unreveal() {
+		  await fetch(`/apply/${this.targetUser}/${this.targetProb}`);
+		  await this.sync();
+	  },
+
+          findNext() {
+		  console.log('step');
+		  this.targetUser = null;
+		  this.targetProb = null;
+		  for(let i = this.ranklist.length-1; i >=0; --i) {
+			  for(let j = 0; j<QUESTIONS.length; ++j) {
+				  if(j in this.ranklist[i].details && this.ranklist[i].details[j].pending > 0) {
+					  this.targetUser = this.ranklist[i].id;
+					  this.targetProb = j;
+					  return;
+				  }
+			  }
+		  }
+	  },
 
     timeSub(ts) {
       const t = moment(ts);
@@ -165,4 +197,8 @@ function boot() {
 
   inst = new Vue(tmpl);
   timerInst = new Vue(timerTmpl);
+
+	document.addEventListener('keydown', () => {
+		inst.step();
+	});
 }

@@ -9,7 +9,7 @@
     <script src="socket.io.js"></script>
     <script src="balloons.js"></script>
   </head>
-  <body class="balloon-body" onload="boot()">
+  <body class="balloon-body" onload="boot()" @keydown.space="step()">
     <div id="app">
       <div class="title centering">&#x1F388; THUPC &#x1F388;</div>
 
