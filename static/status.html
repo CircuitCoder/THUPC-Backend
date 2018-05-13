@@ -14,7 +14,7 @@
   <body onload="boot()">
     <div class="status" id="app">
       <transition-group name="item">
-        <div class="submission" v-for="s of list" :key="s.id" @click="s.resolved = !s.resolved">
+        <div class="submission" v-for="s of list" :key="s.id">
           <div class="question">{{ QUESTIONS[s.question] }}</div>
           <div class="title">{{ (teams[s.from] || {}).title }}</div>
           <div class="time">{{ s.time }}</div>
