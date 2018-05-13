@@ -1,0 +1,91 @@
+.status {
+  width: 300px;
+  color: rgba(0,0,0,.87);
+}
+.submission {
+  background: rgba(0,0,0,.12);
+  height: 60px;
+  box-sizing: border-box;
+  padding: 10px;
+  padding-left: 60px;
+  padding-right: 80px;
+  position: relative;
+}
+
+.question {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 60px;
+  height: 60px;
+  font-size: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.title {
+  font-size: 20px;
+  line-height: 24px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-right: 10px;
+  font-weight: bold;
+}
+
+.time {
+  font-size: 12px;
+  line-height: 16px;
+  color: rgba(0,0,0,.54);
+}
+
+.detail {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  top: 0;
+  width: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 36px;
+  background: #C62828;
+}
+
+.pending {
+  background: #424242;
+}
+
+.accepted {
+  background: #2E7D32;
+}
+
+.fade-enter, .fade-leave-to {
+  opacity: 0;
+}
+
+.fade-enter-active {
+  transition: ease .5s ease-out;
+}
+
+.fade-leave-active {
+  transition: ease .5s ease-in;
+}
+
+.item-enter, .item-leave-to {
+  opacity: 0;
+}
+
+.item-enter-active {
+  transition: ease .5s ease-out;
+}
+
+.item-leave-active {
+  transition: ease .5s ease-in;
+}
+
+.item-move {
+  transition: transform .5s;
+}

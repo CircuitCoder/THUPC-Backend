@@ -82,6 +82,8 @@ async function submission(payload) {
   ioRanking.emit('sync');
 
   ioStatus.emit('pending', {
+    timing: Config.contest,
+
     id: payload.id,
     from: payload.from,
     question: payload.question,
