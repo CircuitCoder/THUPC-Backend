@@ -55,6 +55,7 @@ const tmpl = {
       for(let r of this.ranklist) {
         const dur = moment.duration(r.time);
         r.clamped_time = Math.floor(dur.asMinutes());
+        this.$set(r, 'expanded', false);
         for(let k in r.details) {
           if(r.details[k].acceptedAt) {
             r.details[k].clamped_acceptedAt = this.timeSub(r.details[k].acceptedAt);
@@ -62,7 +63,6 @@ const tmpl = {
           }
         }
       }
-
       this.firstBlood = new Array(this.QUESTIONS.length).fill(null);
       for(let r of this.ranklist) {
         for(let k in r.details) {
@@ -100,6 +100,10 @@ const tmpl = {
       const t = moment(ts);
       const starting = moment(this.timing.from);
       return '.'+moment.duration(t.diff(starting)).milliseconds();
+    },
+
+    expand(r) {
+      r.expanded = !r.expanded;
     }
   },
 

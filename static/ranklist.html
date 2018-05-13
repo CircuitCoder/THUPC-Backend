@@ -29,7 +29,7 @@
         </div>
 
         <transition-group name="ranklist">
-          <div v-for="(r, index) of ranklist" class="ranklist-row" :key="r.id" :class="{ pinned: PINNED.includes(r.id), 'best-girl': bestGirl === r }">
+          <div v-for="(r, index) of ranklist" class="ranklist-row" :key="r.id" :class="{ pinned: PINNED.includes(r.id), 'best-girl': bestGirl === r, expanded: r.expanded }" @click="expand(r)">
             <div class="ranklist-rank"
               :class="{
                 gold: r.rank < 4,
@@ -58,6 +58,12 @@
                 </div>
               </div>
               <div v-else class="absent"> - </div>
+            </div>
+            <div class="team-info">
+              <div class="team-member" v-for="m of teams[r.id].members">
+                <div class="member-name">{{ m.name }}</div>
+                <div class="member-info">{{ m.grade }} {{ m.sex }}</div>
+              </div>
             </div>
           </div>
         </transition-group>
