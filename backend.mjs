@@ -92,19 +92,18 @@ async function submission(payload) {
 }
 
 async function finalize(payload) {
-  let cont;
-  if(payload.accepted)
-    cont = store.accepted(payload.from, payload.question, payload.id);
-  else
-    cont =- store.faulty(payload.from, payload.question, payload.id);
+  let cont = store.get(payload.from, payload.question, payload.id);
   const endingTime = moment(Config.contest.to);
-  endingTime.subtract(1).hours();
-
+  endingTime.subtract(1, 'h');
   if(endingTime < moment(cont.time)) {
-
     // Frozen
     return;
   }
+
+  if(payload.accepted)
+    cont = store.accepted(payload.from, payload.question, payload.id);
+  else
+    cont = store.faulty(payload.from, payload.question, payload.id);
 
   /*
   ioRanking.emit('update', {

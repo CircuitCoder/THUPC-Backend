@@ -32,9 +32,9 @@
           <div v-for="(r, index) of ranklist" class="ranklist-row" :key="r.id" :class="{ pinned: PINNED.includes(r.id), 'best-girl': bestGirl === r, expanded: r.expanded }" @click="expand(r)">
             <div class="ranklist-rank"
               :class="{
-                gold: r.rank < 4,
-                silver: r.rank > 4 && r.rank < 8,
-                copper: r.rank > 7 && r.rank < 12,
+                gold: r.rank < 5,
+                silver: r.rank >= 5 && r.rank < 9,
+                copper: r.rank >= 9 && r.rank < 13,
               }">
               {{ r.rank }}
             </div>

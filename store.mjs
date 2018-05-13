@@ -49,6 +49,13 @@ export default class Store {
     ++bucket.pending;
   }
 
+  get(id, question, subId) {
+    const bucket = this.bucket(id, question);
+    const index = bucket.tries.findIndex(e => e.id === subId);
+    if(index === -1) throw new Error(`Submission ${subId} not found. Maybe the storage is out of sync?`);
+	return bucket.tries[index];
+  }
+
   accepted(id, question, subId) {
     const bucket = this.bucket(id, question);
     const index = bucket.tries.findIndex(e => e.id === subId);

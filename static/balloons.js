@@ -1,6 +1,22 @@
 const INTERVAL = 60 * 1000;
 const ID = window.location.hash.substr(1);
 
+const IDMAP = [
+	'A',
+	'B',
+	'C',
+	'D',
+	'E',
+	'F',
+	'G',
+	'H',
+	'I',
+	'J',
+	'K',
+	'L',
+	'M',
+];
+
 let socket;
 
 const tmpl = {
@@ -9,6 +25,7 @@ const tmpl = {
     unclaimed: [],
     assigned: [],
     teams: {},
+	  IDMAP,
   },
   async created() {
     const req = await fetch('/teams');

@@ -20,7 +20,7 @@
         <div class="balloons">
           <div class="balloon" v-for="b of assigned">
             <div class="balloon-name">{{ teams[b.from].title }}</div>
-            <div class="balloon-loc">{{ teams[b.from].seat }}</div>
+	    <div class="balloon-loc">{{ teams[b.from].seat }} - {{ IDMAP[b.question] }}</div>
             <div class="balloon-action" @click="resolve(b)">
               <img src="assets/done.svg"></img>
             </div>
@@ -35,7 +35,7 @@
         <div class="balloons">
           <div class="balloon" v-for="b of unclaimed">
             <div class="balloon-name">{{ teams[b.from].title }}</div>
-            <div class="balloon-loc">{{ teams[b.from].seat }}</div>
+	    <div class="balloon-loc">{{ teams[b.from].seat }} - {{ IDMAP[b.question] }}</div>
             <div class="balloon-action" @click="claim(b)">
               <img src="assets/mark.svg"></img>
             </div>
